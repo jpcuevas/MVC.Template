@@ -1,0 +1,69 @@
+﻿<#@ Template Language="C#" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output Extension="cs" #>
+using SiteZeras.Data.Core;
+using SiteZeras.Objects;
+using SiteZeras.Tests.Data;
+using SiteZeras.Validators;
+using NUnit.Framework;
+using System.Web.Mvc;
+
+namespace SiteZeras.Tests.Unit.Validators
+{
+    [TestFixture]
+    public class <#= Model.Validator #>Tests
+    {
+        private <#= Model.Validator #> validator;
+        private TestingContext context;
+
+        [SetUp]
+        public void SetUp()
+        {
+            context = new TestingContext();
+            validator = new <#= Model.Validator #>(new UnitOfWork(context));
+            validator.ModelState = new ModelStateDictionary();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            context.Dispose();
+            validator.Dispose();
+        }
+
+        #region Method: CanCreate(<#= Model.View #> view)
+
+        [Test]
+        public void CanCreate_CanNotCreateWithInvalidModelState()
+        {
+            validator.ModelState.AddModelError("Test", "Test");
+
+            Assert.IsFalse(validator.CanCreate(new <#= Model.View #>()));
+        }
+
+        [Test]
+        public void CanCreate_CanCreateValid<#= Model.Model #>()
+        {
+            Assert.IsTrue(validator.CanCreate(new <#= Model.View #>()));
+        }
+
+        #endregion
+
+        #region Method: CanEdit(<#= Model.View #> view)
+
+        [Test]
+        public void CanEdit_CanNotEditWithInvalidModelState()
+        {
+            validator.ModelState.AddModelError("Test", "Test");
+
+            Assert.IsFalse(validator.CanEdit(new <#= Model.View #>()));
+        }
+
+        [Test]
+        public void CanEdit_CanEditValid<#= Model.Model #>()
+        {
+            Assert.IsTrue(validator.CanEdit(new <#= Model.View #>()));
+        }
+
+        #endregion
+    }
+}

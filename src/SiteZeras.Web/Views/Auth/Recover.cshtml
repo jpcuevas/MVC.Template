@@ -1,0 +1,46 @@
+﻿@using SiteZeras.Resources.Views.AccountRecoveryView
+
+@model AccountRecoveryView
+
+<div class="title text">@ContentTitles.AuthRecover</div>
+<div class="separator"></div>
+
+@using (Html.BeginForm())
+{
+    @Html.Partial("_AuthAlerts")
+
+    @Html.AntiForgeryToken()
+    <div class="auth-content">
+        <div class="input-group">
+            <span class="fa fa-envelope"></span>
+            @Html.TextBoxFor(model => model.Email, new { autocomplete = "off", placeholder = Titles.Email })
+        </div>
+    </div>
+    <input class="btn btn-primary" type="submit" value="@Actions.Recover" />
+}
+
+<div class="separator"></div>
+<div class="auth-actions">
+    @Html.ActionLink(
+        " ",
+        "Login",
+        null,
+        new
+        {
+            @class = "text fa fa-sign-in",
+            rel = "tooltip",
+            data_original_title = SiteZeras.Resources.Views.AccountView.Texts.Login
+        }
+    )
+    @Html.ActionLink(
+        " ",
+        "Register",
+        null,
+        new
+        {
+            @class = "text fa fa-edit",
+            rel = "tooltip",
+            data_original_title = SiteZeras.Resources.Views.AccountView.Texts.CreateNewAccount
+        }
+    )
+</div>

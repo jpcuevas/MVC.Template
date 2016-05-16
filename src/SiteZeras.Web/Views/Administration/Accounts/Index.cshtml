@@ -1,0 +1,24 @@
+﻿@model IQueryable<AccountView>
+
+<div class="widget-box">
+    <div class="widget-title">
+        <span class="widget-title-icon fa fa-th"></span>
+        <h5>@Headers.AdministrationAccountsIndex</h5>
+    </div>
+    <div class="widget-content">
+        @(
+            Html
+                .Grid(Model)
+                .Columns(columns =>
+                {
+                    columns.AddActionLink("Details", "fa fa-info");
+                    columns.AddActionLink("Edit", "fa fa-pencil");
+
+                    columns.AddProperty(model => model.Username);
+                    columns.AddProperty(model => model.RoleName);
+                    columns.AddProperty(model => model.Email);
+                })
+                .ApplyDefaults()
+        )
+    </div>
+</div>

@@ -1,0 +1,18 @@
+﻿<#@ Template Language="C#" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output Extension="cs" #>
+using SiteZeras.Objects;
+using System;
+using System.Linq;
+
+namespace SiteZeras.Services
+{
+    public interface <#= Model.IService #> : IService
+    {
+        IQueryable<<#= Model.View #>> GetViews();
+        TView Get<TView>(String id) where TView : BaseView;
+
+        void Create(<#= Model.View #> view);
+        void Edit(<#= Model.View #> view);
+        void Delete(String id);
+    }
+}

@@ -1,0 +1,148 @@
+﻿<#@ Template Language="C#" HostSpecific="True" Inherits="DynamicTransform" #>
+<#@ Output Extension="cs" #>
+using AutoMapper;
+using AutoMapper.QueryableExtensions;
+using SiteZeras.Data.Core;
+using SiteZeras.Objects;
+using SiteZeras.Services;
+using SiteZeras.Tests.Data;
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
+
+namespace SiteZeras.Tests.Unit.Services
+{
+    [TestFixture]
+    public class <#= Model.Service #>Tests
+    {
+        private <#= Model.Service #> service;
+        private <#= Model.Model #> <#= Model.ModelName #>;
+        private TestingContext context;
+
+        [SetUp]
+        public void SetUp()
+        {
+            context = new TestingContext();
+            service = new <#= Model.Service #>(new UnitOfWork(context));
+
+            TearDownData();
+            SetUpData();
+        }
+
+        [TearDown]
+        public void TearDown()
+        {
+            service.Dispose();
+            context.Dispose();
+        }
+
+        #region Method: GetViews()
+
+        [Test]
+        public void GetViews_Gets<#= Model.View #>s()
+        {
+            IEnumerator<<#= Model.View #>> actual = service.GetViews().GetEnumerator();
+            IEnumerator<<#= Model.View #>> expected = context
+                .Set<<#= Model.Model #>>()
+                .Project()
+                .To<<#= Model.View #>>()
+                .OrderByDescending(<#= Model.ModelName #> => <#= Model.ModelName #>.CreationDate)
+                .GetEnumerator();
+
+            while (expected.MoveNext() | actual.MoveNext())
+            {
+                Assert.AreEqual(expected.Current.CreationDate, actual.Current.CreationDate);
+                Assert.AreEqual(expected.Current.Id, actual.Current.Id);
+            }
+
+            Assert.Fail("Not all properties tested");
+        }
+
+        #endregion
+
+        #region Method: Get<TView>(String id)
+
+        [Test]
+        public void GetView_GetsViewById()
+        {
+            <#= Model.View #> expected = Mapper.Map<<#= Model.View #>>(<#= Model.ModelName #>);
+            <#= Model.View #> actual = service.Get<<#= Model.View #>>(<#= Model.ModelName #>.Id);
+
+            Assert.AreEqual(expected.CreationDate, actual.CreationDate);
+            Assert.AreEqual(expected.Id, actual.Id);
+
+            Assert.Fail("Not all properties tested");
+        }
+
+        #endregion
+
+        #region Method: Create(<#= Model.View #> view)
+
+        [Test]
+        public void Create_Creates<#= Model.Model #>()
+        {
+            <#= Model.View #> expected = new <#= Model.View #>();
+            service.Create(expected);
+
+            <#= Model.Model #> actual = context.Set<<#= Model.Model #>>().AsNoTracking().Single(model => model.Id == expected.Id);
+
+            Assert.AreEqual(expected.CreationDate, actual.CreationDate);
+            Assert.AreEqual(expected.Id, actual.Id);
+
+            Assert.Fail("Not all properties tested");
+        }
+
+        #endregion
+
+        #region Method: Edit(<#= Model.View #> view)
+
+        [Test]
+        public void Edit_Edits<#= Model.Model #>()
+        {
+            <#= Model.Model #> <#= Model.ModelName #> = context.Set<<#= Model.Model #>>().AsNoTracking().Single();
+            <#= Model.View #> view = service.Get<<#= Model.View #>>(<#= Model.ModelName #>.Id);
+            Assert.Fail("No update made");
+
+            service.Edit(view);
+
+            <#= Model.Model #> actual = context.Set<<#= Model.Model #>>().AsNoTracking().Single();
+            <#= Model.Model #> expected = <#= Model.ModelName #>;
+
+            Assert.AreEqual(expected.CreationDate, actual.CreationDate);
+            Assert.AreEqual(expected.Id, actual.Id);
+
+            Assert.Fail("Not all properties tested");
+        }
+
+        #endregion
+
+        #region Method: Delete(String id)
+
+        [Test]
+        public void Delete_Deletes<#= Model.Model #>()
+        {
+            service.Delete(<#= Model.ModelName #>.Id);
+
+            CollectionAssert.IsEmpty(context.Set<<#= Model.Model #>>());
+        }
+
+        #endregion
+
+        #region Test helpers
+
+        private void SetUpData()
+        {
+            <#= Model.ModelName #> = new <#= Model.Model #>();
+
+            context.Set<<#= Model.Model #>>().Add(<#= Model.ModelName #>);
+            context.SaveChanges();
+        }
+        private void TearDownData()
+        {
+            context.Set<<#= Model.Model #>>().RemoveRange(context.Set<<#= Model.Model #>>());
+            context.SaveChanges();
+        }
+
+        #endregion
+    }
+}
